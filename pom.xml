@@ -28,8 +28,8 @@
     -->
   </properties>
 
-  <name>TODO Plugin</name>
-  <description>TODO</description>
+  <name>Pushbullet Plugin</name>
+  <description>Pushbullet notification with Build result</description>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/TODO+Plugin</url>
 
   <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
@@ -69,14 +69,13 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
-  <!-- If you want to depend on other plugins:
+
   <dependencies>
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>credentials</artifactId>
-      <version>1.9.4</version>
+      <groupId>fr.jcgay.send-notification</groupId>
+      <artifactId>send-notification</artifactId>
+      <version>0.10.1</version>
     </dependency>
   </dependencies>
-  -->
 
 </project>
