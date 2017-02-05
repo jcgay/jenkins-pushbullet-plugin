@@ -4,13 +4,7 @@ A Jenkins plugin to report build status with [Pushbullet](https://www.pushbullet
 
 ## Installation
 
-### Build
-
-Build the plugin locally with Maven:
-
-    > mvn package
-
-The plugin binary will be available in `target/pushbullet.hpi`.
+Download [pushbullet.hpi](https://bintray.com/jcgay/maven/download_file?file_path=fr%2Fjcgay%2Fjenkins%2Fplugins%2Fpushbullet%2F0.1.0%2Fpushbullet-0.1.0.hpi) and install it manually in Jenkins (`http://jenkins/pluginManager/advanced`).
 
 ## Usage
 
@@ -35,6 +29,12 @@ Also if a user has launched a build manually, he will receive a notification.
 Eventually users can be added in the job configuration `Report build status with Pushbullet`, these ones will be notified for every build. `Users` is a string of comma separated Jenkins user IDs (`toto,tata,titi` for example).
 
 # Build
+
+Build the plugin locally with Maven:
+
+    > mvn package
+
+The plugin binary will be available in `target/pushbullet.hpi`.
 
 ## Status
 
