@@ -24,7 +24,6 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.util.Properties;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public class PushbulletNotifier extends Notifier {
@@ -70,12 +69,12 @@ public class PushbulletNotifier extends Notifier {
 
     private void notify(AbstractBuild<?, ?> build, User user, PrintStream logger) {
         PushbulletUser pushbullet = user.getProperty(PushbulletUser.class);
-        if (pushbullet == null || isBlank(pushbullet.getApiToken())) {
+        if (pushbullet == null || pushbullet.getSecretApiToken() == null) {
             return;
         }
 
         Properties configuration = new Properties();
-        configuration.put("notifier.pushbullet.apikey", pushbullet.getApiToken());
+        configuration.put("notifier.pushbullet.apikey", pushbullet.getSecretApiToken().getPlainText());
 
         fr.jcgay.notification.Notifier notifier = new SendNotification()
                 .setApplication(JENKINS)
