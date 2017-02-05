@@ -1,6 +1,7 @@
 package fr.jcgay.jenkins.plugins.pushbullet;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Equivalence;
 import com.google.common.base.Function;
 import hudson.Extension;
 import hudson.Launcher;
@@ -18,6 +19,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 
 import static com.google.common.base.Objects.firstNonNull;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -59,19 +62,26 @@ public class PushbulletNotifier extends Notifier {
         this.pushbullet = firstNonNull(this.pushbullet, new SendNotification());
         this.getUserById = firstNonNull(this.getUserById, GetUserById.INSTANCE);
 
+        UserIdEquivalence byId = new UserIdEquivalence();
+        LinkedHashSet<Equivalence.Wrapper<User>> users = new LinkedHashSet<>();
+
         Cause.UserIdCause currentUser = build.getCause(Cause.UserIdCause.class);
         if (currentUser != null) {
-            pushbullet.notify(build, getUserById.apply(currentUser.getUserId()), listener.getLogger());
+            users.add(byId.wrap(getUserById.apply(currentUser.getUserId())));
         }
 
-        if (isNotBlank(users)) {
-            for (String user : users.split(",")) {
-                pushbullet.notify(build, getUserById.apply(user), listener.getLogger());
+        if (isNotBlank(this.users)) {
+            for (String user : this.users.split(",")) {
+                users.add(byId.wrap(getUserById.apply(user)));
             }
         }
 
         for (User user : build.getCulprits()) {
-            pushbullet.notify(build, user, listener.getLogger());
+            users.add(byId.wrap(user));
+        }
+
+        for (Equivalence.Wrapper<User> user : users) {
+            pushbullet.notify(build, user.get(), listener.getLogger());
         }
 
         return true;
@@ -97,6 +107,18 @@ public class PushbulletNotifier extends Notifier {
         @Override
         public String getDisplayName() {
             return "Report build status with Pushbullet";
+        }
+    }
+
+    private static class UserIdEquivalence extends Equivalence<User> {
+        @Override
+        protected boolean doEquivalent(User a, User b) {
+            return Objects.equals(a.getId(), b.getId());
+        }
+
+        @Override
+        protected int doHash(User user) {
+            return Objects.hash(user.getId());
         }
     }
 }

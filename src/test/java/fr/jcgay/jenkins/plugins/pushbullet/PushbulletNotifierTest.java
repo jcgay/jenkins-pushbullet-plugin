@@ -97,6 +97,19 @@ public class PushbulletNotifierTest {
         verify(pushbullet, never()).notify(any(AbstractBuild.class), any(User.class), any(PrintStream.class));
     }
 
+    @Test
+    public void send_notification_only_once_when_user_appears_in_multiple_source() throws IOException, InterruptedException {
+        notifier = new PushbulletNotifier("jc", pushbullet, getUserById);
+        notifier.perform(buildLaunchedBy("jc", withCulprits("jc")), anyLauncher(), anyBuildListener());
+
+        verify(pushbullet, times(1)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        assertThat(user.getValue().getId()).isEqualTo("jc");
+    }
+
+    private static String[] withCulprits(String userId) {
+        return new String[]{userId};
+    }
+
     private static BuildListener anyBuildListener() {
         BuildListener listener = mock(BuildListener.class);
         when(listener.getLogger()).thenReturn(mock(PrintStream.class));
@@ -111,24 +124,32 @@ public class PushbulletNotifierTest {
         return mock(AbstractBuild.class);
     }
 
-    private static AbstractBuild buildLaunchedBy(String userId) {
+    private static AbstractBuild buildLaunchedBy(String userId, String... culpritsUserIds) {
         Cause.UserIdCause user = mock(Cause.UserIdCause.class);
         when(user.getUserId()).thenReturn(userId);
 
         AbstractBuild build = mock(AbstractBuild.class);
         when(build.getCause(Cause.UserIdCause.class)).thenReturn(user);
+
+        if (culpritsUserIds != null) {
+            addCulprits(build, culpritsUserIds);
+        }
+
         return build;
     }
 
     private static AbstractBuild buildWithCulprits(String... userIds) {
+        AbstractBuild build = mock(AbstractBuild.class);
+        addCulprits(build, userIds);
+        return build;
+    }
+
+    private static void addCulprits(AbstractBuild build, String... userIds) {
         LinkedHashSet<User> users = new LinkedHashSet<>(userIds.length);
         for (String userId : userIds) {
             users.add(user(userId));
         }
-
-        AbstractBuild build = mock(AbstractBuild.class);
         when(build.getCulprits()).thenReturn(users);
-        return build;
     }
 
     private static User user(String id) {
