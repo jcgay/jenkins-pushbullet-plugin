@@ -1,0 +1,10 @@
+sudo: false
+language: java
+jdk:
+  - oraclejdk7
+install:
+  - mvn install -DskipTests=true -B -V
+script:
+  - mvn verify -B
+after_success:
+  - "[[ ${TRAVIS_PULL_REQUEST} == 'false' ]] && [[ ${TRAVIS_TAG} == '' ]] && mvn deploy -DskipTests"

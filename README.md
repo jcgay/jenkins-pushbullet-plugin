@@ -24,7 +24,7 @@ Add `Report build status with Pusbullet` as a `Post Build Action` in your Jenkin
 
 To send notification each user must defines its access token accessible from [here](https://www.pushbullet.com/account) in Jenkins user settings (`http://jenkins/user/{me}/configure`).  
 
-![Job Configuration](https://jeanchristophegay.com/images/jenkins-pushbullet-plugin-user-configuration.png)
+![User Configuration](https://jeanchristophegay.com/images/jenkins-pushbullet-plugin-user-configuration.png)
 
 If a user has not set an access token, Jenkins will not try to send him push notifications.
 
@@ -35,6 +35,10 @@ Also if a user has launched a build manually, he will receive a notification.
 Eventually users can be added in the job configuration `Report build status with Pushbullet`, these ones will be notified for every build. `Users` is a string of comma separated Jenkins user IDs (`toto,tata,titi` for example).
 
 # Build
+
+## Status
+
+[![Build Status](https://travis-ci.org/jcgay/jenkins-pushbullet-plugin.png)](https://travis-ci.org/jcgay/jenkins-pushbullet-plugin)
 
 ## Release
 
