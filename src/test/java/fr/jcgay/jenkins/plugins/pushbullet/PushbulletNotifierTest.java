@@ -63,9 +63,9 @@ public class PushbulletNotifierTest {
 
         verify(pushbullet, times(3)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
         assertThat(user.getAllValues())
-                .extracting("id")
-                .hasSize(3)
-                .containsOnly("jc", "toto", "titi");
+            .extracting("id")
+            .hasSize(3)
+            .containsOnly("jc", "toto", "titi");
     }
 
     @Test
@@ -84,9 +84,9 @@ public class PushbulletNotifierTest {
 
         verify(pushbullet, times(3)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
         assertThat(user.getAllValues())
-                .extracting("id")
-                .hasSize(3)
-                .containsOnly("jc", "toto", "titi");
+            .extracting("id")
+            .hasSize(3)
+            .containsOnly("jc", "toto", "titi");
     }
 
     @Test

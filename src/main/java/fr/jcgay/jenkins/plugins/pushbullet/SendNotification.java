@@ -30,17 +30,17 @@ class SendNotification {
         configuration.put("notifier.pushbullet.apikey", pushbullet.getSecretApiToken().getPlainText());
 
         fr.jcgay.notification.Notifier notifier = new fr.jcgay.notification.SendNotification()
-                .setApplication(JENKINS)
-                .addConfigurationProperties(configuration)
-                .setChosenNotifier("pushbullet")
-                .initNotifier();
+            .setApplication(JENKINS)
+            .addConfigurationProperties(configuration)
+            .setChosenNotifier("pushbullet")
+            .initNotifier();
 
         Status result = Status.of(build.getResult());
 
         Notification notification = Notification.builder(result.message() + " of " + build.getFullDisplayName(), build.getUrl(), Icon.create(result.url(), result.message()))
-                .subtitle(build.getDurationString())
-                .level(result == Status.FAILURE ? Notification.Level.ERROR : Notification.Level.INFO)
-                .build();
+            .subtitle(build.getDurationString())
+            .level(result == Status.FAILURE ? Notification.Level.ERROR : Notification.Level.INFO)
+            .build();
 
         try {
             notifier.send(notification);
