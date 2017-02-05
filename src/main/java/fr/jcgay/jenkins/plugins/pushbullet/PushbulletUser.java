@@ -27,7 +27,7 @@ public class PushbulletUser extends UserProperty {
     @Extension
     public static final class DescriptorImpl extends UserPropertyDescriptor {
         public String getDisplayName() {
-            return "Pusbullet";
+            return "Pushbullet";
         }
 
         @Override
