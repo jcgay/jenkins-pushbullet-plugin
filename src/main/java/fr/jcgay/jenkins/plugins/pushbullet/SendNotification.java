@@ -26,8 +26,13 @@ class SendNotification {
             return;
         }
 
+        String token = pushbullet.getSecretApiToken().getPlainText();
+        if (token == null || token.isEmpty()) {
+            return;
+        }
+
         Properties configuration = new Properties();
-        configuration.put("notifier.pushbullet.apikey", pushbullet.getSecretApiToken().getPlainText());
+        configuration.put("notifier.pushbullet.apikey", token);
 
         fr.jcgay.notification.Notifier notifier = new fr.jcgay.notification.SendNotification()
             .setApplication(JENKINS)

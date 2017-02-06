@@ -17,6 +17,10 @@ public class PushbulletUser extends UserProperty {
     }
 
     public String getApiToken() {
+        String token = apiToken.getPlainText();
+        if (token == null || token.isEmpty()) {
+            return null;
+        }
         return apiToken.getEncryptedValue();
     }
 
