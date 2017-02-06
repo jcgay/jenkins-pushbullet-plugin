@@ -1,3 +1,9 @@
+#0.1.1
+***
+
+- Return null when user access token is not really set ([45861c3](http://github.com/jcgay/jenkins-pushbullet-plugin/commit/45861c32d3a474b83696a4cf576e399aad4f5af1))
+- Fix typo in Pushbullet user section title ([8cd763d](http://github.com/jcgay/jenkins-pushbullet-plugin/commit/8cd763d11c01395e3b6dcbdb243d963fbfa0dcbd))
+
 #0.1.0
 ***
 
