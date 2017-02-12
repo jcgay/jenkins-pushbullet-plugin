@@ -42,7 +42,10 @@ class SendNotification {
 
         Status result = Status.of(build.getResult());
 
-        Notification notification = Notification.builder(result.message() + " of " + build.getFullDisplayName(), build.getUrl(), Icon.create(result.url(), result.message()))
+        Notification notification = Notification.builder()
+            .title(result.message() + " of " + build.getProject().getName())
+            .message(build.getFullDisplayName() + " (" + build.getDurationString() + ")")
+            .icon(Icon.create(result.url(), result.message()))
             .subtitle(build.getDurationString())
             .level(result == Status.FAILURE ? Notification.Level.ERROR : Notification.Level.INFO)
             .build();
