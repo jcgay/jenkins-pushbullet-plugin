@@ -1,3 +1,10 @@
+#0.2.0
+***
+
+- Fail when Pushbullet access token is not valid ([7a1fd93](http://github.com/jcgay/jenkins-pushbullet-plugin/commit/7a1fd9319dad0cbcb939a0633d6087dad772c0c0))
+- Use project name in notification title instead of build fullDisplayName ([3690db7](http://github.com/jcgay/jenkins-pushbullet-plugin/commit/3690db7100bf83be4138423060cee045bab82a18))
+- Send notification when build cause is an upstream job ([6c72199](http://github.com/jcgay/jenkins-pushbullet-plugin/commit/6c72199000df5a0dea65ab2b426fee4dd60ab8c9))
+
 #0.1.1
 ***
 
