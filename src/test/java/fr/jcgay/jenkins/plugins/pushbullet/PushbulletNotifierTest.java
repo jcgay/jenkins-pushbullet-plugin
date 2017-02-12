@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedHashSet;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -104,6 +105,28 @@ public class PushbulletNotifierTest {
 
         verify(pushbullet, times(1)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
+    }
+
+    @Test
+    public void send_notification_when_job_has_been_triggered_by_another_job_initially_started_by_a_user() throws IOException, InterruptedException {
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier.perform(buildLaunchedByUpstream("jc"), anyLauncher(), anyBuildListener());
+
+        verify(pushbullet, times(1)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        assertThat(user.getValue().getId()).isEqualTo("jc");
+    }
+
+    private static AbstractBuild buildLaunchedByUpstream(String userId) {
+        Cause.UserIdCause user = mock(Cause.UserIdCause.class);
+        when(user.getUserId()).thenReturn(userId);
+
+        Cause.UpstreamCause upstream = mock(Cause.UpstreamCause.class);
+        when(upstream.getUpstreamCauses()).thenReturn(singletonList((Cause) user));
+
+        AbstractBuild build = mock(AbstractBuild.class);
+        when(build.getCause(Cause.UpstreamCause.class)).thenReturn(upstream);
+
+        return build;
     }
 
     private static String[] withCulprits(String userId) {

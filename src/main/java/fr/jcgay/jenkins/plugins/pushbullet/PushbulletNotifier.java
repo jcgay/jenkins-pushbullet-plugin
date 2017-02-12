@@ -63,28 +63,48 @@ public class PushbulletNotifier extends Notifier {
         this.getUserById = firstNonNull(this.getUserById, GetUserById.INSTANCE);
 
         UserIdEquivalence byId = new UserIdEquivalence();
-        LinkedHashSet<Equivalence.Wrapper<User>> users = new LinkedHashSet<>();
+        LinkedHashSet<Equivalence.Wrapper<User>> usersToNotify = new LinkedHashSet<>();
 
         Cause.UserIdCause currentUser = build.getCause(Cause.UserIdCause.class);
         if (currentUser != null) {
-            users.add(byId.wrap(getUserById.apply(currentUser.getUserId())));
+            usersToNotify.add(byId.wrap(getUserById.apply(currentUser.getUserId())));
         }
 
         if (isNotBlank(this.users)) {
             for (String user : this.users.split(",")) {
-                users.add(byId.wrap(getUserById.apply(user)));
+                usersToNotify.add(byId.wrap(getUserById.apply(user)));
             }
         }
 
         for (User user : build.getCulprits()) {
-            users.add(byId.wrap(user));
+            usersToNotify.add(byId.wrap(user));
         }
 
-        for (Equivalence.Wrapper<User> user : users) {
+        Cause.UpstreamCause upstreamCause = build.getCause(Cause.UpstreamCause.class);
+        if (upstreamCause != null) {
+            String userId = tryFindUserWhoHasLaunchedUpstreamJob(upstreamCause);
+            if (userId != null) {
+                usersToNotify.add(byId.wrap(getUserById.apply(userId)));
+            }
+        }
+
+        for (Equivalence.Wrapper<User> user : usersToNotify) {
             pushbullet.notify(build, user.get(), listener.getLogger());
         }
 
         return true;
+    }
+
+    private String tryFindUserWhoHasLaunchedUpstreamJob(Cause.UpstreamCause cause) {
+        for (Cause upstreamCause : cause.getUpstreamCauses()) {
+            if (upstreamCause instanceof Cause.UserIdCause) {
+                return ((Cause.UserIdCause) upstreamCause).getUserId();
+            }
+            if (upstreamCause instanceof Cause.UpstreamCause) {
+                return tryFindUserWhoHasLaunchedUpstreamJob((Cause.UpstreamCause) upstreamCause);
+            }
+        }
+        return null;
     }
 
     private enum GetUserById implements Function<String, User> {
