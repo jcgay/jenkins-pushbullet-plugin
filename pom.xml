@@ -156,9 +156,19 @@
             <version>0.10.2</version>
         </dependency>
         <dependency>
+            <groupId>org.jenkins-ci</groupId>
+            <artifactId>symbol-annotation</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-job</artifactId>
+            <version>2.9</version>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.7.2</version>
+            <artifactId>mockito-inline</artifactId>
+            <version>2.7.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>

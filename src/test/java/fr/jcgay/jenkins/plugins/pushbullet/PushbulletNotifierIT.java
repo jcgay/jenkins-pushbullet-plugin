@@ -18,7 +18,9 @@ public class PushbulletNotifierIT {
         jc.addProperty(new PushbulletUser("bad-access-token"));
 
         FreeStyleProject project = jenkins.createFreeStyleProject("notify-me");
-        project.getPublishersList().add(new PushbulletNotifier(jc.getId()));
+        PushbulletNotifier notifier = new PushbulletNotifier();
+        notifier.setUsers(jc.getId());
+        project.getPublishersList().add(notifier);
 
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
         jenkins.assertLogContains("Notification of user [jc] with Pushbullet has failed.", build);

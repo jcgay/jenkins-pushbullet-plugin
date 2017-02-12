@@ -26,7 +26,7 @@ public enum Status {
     }
 
     public static Status of(Result result) {
-        if (result == Result.SUCCESS) {
+        if (result == null || result == Result.SUCCESS) {
             return SUCCESS;
         }
         return FAILURE;

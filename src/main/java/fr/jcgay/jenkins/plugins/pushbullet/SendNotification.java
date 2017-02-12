@@ -4,7 +4,7 @@ import fr.jcgay.notification.Application;
 import fr.jcgay.notification.Icon;
 import fr.jcgay.notification.Notification;
 import fr.jcgay.notification.SendNotificationException;
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.model.User;
 
 import java.io.PrintStream;
@@ -16,7 +16,7 @@ class SendNotification {
     private static final Icon JENKINS_ICON = Icon.create(resource("jenkins.png"), "jenkins");
     private static final Application JENKINS = Application.builder("application/jenkins", "Jenkins", JENKINS_ICON).build();
 
-    void notify(AbstractBuild<?, ?> build, User user, PrintStream logger) {
+    void notify(Run<?, ?> build, User user, PrintStream logger) {
         if (user == null) {
             return;
         }
@@ -43,7 +43,7 @@ class SendNotification {
         Status result = Status.of(build.getResult());
 
         Notification notification = Notification.builder()
-            .title(result.message() + " of " + build.getProject().getName())
+            .title(result.message() + " of " + build.getParent().getName())
             .message(build.getFullDisplayName() + " (" + build.getDurationString() + ")")
             .icon(Icon.create(result.url(), result.message()))
             .subtitle(build.getDurationString())
