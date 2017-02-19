@@ -1,3 +1,8 @@
+#0.3.0
+***
+
+- Add compatibility with Pipeline ([f37461d](http://github.com/jcgay/jenkins-pushbullet-plugin/commit/f37461d03e1f985bda044cf54c540dec665ffe07))
+
 #0.2.0
 ***
 
