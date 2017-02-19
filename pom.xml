@@ -11,7 +11,7 @@
 
     <groupId>fr.jcgay.jenkins.plugins</groupId>
     <artifactId>pushbullet</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.0</version>
     <packaging>hpi</packaging>
 
     <properties>
@@ -71,7 +71,7 @@
         <url>https://github.com/jcgay/${github.repo}.git</url>
         <connection>scm:git:git://github.com/jcgay/${github.repo}.git</connection>
         <developerConnection>scm:git:git@github.com:jcgay/${github.repo}.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>v0.3.0</tag>
   </scm>
 
     <repositories>
