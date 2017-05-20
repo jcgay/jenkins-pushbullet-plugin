@@ -4,28 +4,19 @@ import hudson.Extension;
 import hudson.model.User;
 import hudson.model.UserProperty;
 import hudson.model.UserPropertyDescriptor;
-import hudson.util.Secret;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class PushbulletUser extends UserProperty {
 
-    private final Secret apiToken;
+    private final String accountId;
 
     @DataBoundConstructor
-    public PushbulletUser(String apiToken) {
-        this.apiToken = Secret.fromString(apiToken);
+    public PushbulletUser(String accountId) {
+        this.accountId = accountId;
     }
 
-    public String getApiToken() {
-        String token = apiToken.getPlainText();
-        if (token == null || token.isEmpty()) {
-            return null;
-        }
-        return apiToken.getEncryptedValue();
-    }
-
-    public Secret getSecretApiToken() {
-        return apiToken;
+    public String getAccountId() {
+        return this.accountId;
     }
 
     @Extension

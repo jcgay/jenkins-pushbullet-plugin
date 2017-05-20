@@ -8,13 +8,20 @@ Download [pushbullet.hpi](https://bintray.com/jcgay/maven/download_file?file_pat
 
 ## Usage
 
-### Each user must set its Pushbullet access token
+### Set admin Pushbullet access token
 
-To receive notification each user must define its access token accessible from [here](https://www.pushbullet.com/account) in Jenkins user settings (`http://<jenkins.url>/me/configure`).  
+To send notifications, Jenkins needs a Pushbullet access token accessible from [here](https://www.pushbullet.com/account).  
+Set it in `Pushbullet` section in Jenkins administration (`http://<jenkins.url>/configure`)
+
+![Jenkins Configuration](https://jeanchristophegay.com/images/jenkins-pushbullet-plugin-admin-configuration.png)
+
+If the token is not set, Jenkins will not try to send push notifications.
+
+### User account
+
+To receive notification each user must define its Pushbullet account ID (email) in Jenkins user settings (`http://<jenkins.url>/me/configure`).
 
 ![User Configuration](https://jeanchristophegay.com/images/jenkins-pushbullet-plugin-user-configuration.png)
-
-If a user has not set an access token, Jenkins will not try to send him push notifications.
 
 ### Notified users
 

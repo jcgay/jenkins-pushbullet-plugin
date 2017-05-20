@@ -14,12 +14,11 @@ public class PushbulletNotifierIT {
 
     @Test(timeout = 30 * 1000)
     public void should_fail_fast_when_access_token_is_not_valid() throws Exception {
-        User jc = User.get("jc");
-        jc.addProperty(new PushbulletUser("bad-access-token"));
+        PushbulletNotifier notifier = new PushbulletNotifier();
+        notifier.getDescriptor().setApiToken("bad-access-token");
+        notifier.setUsers(User.get("jc").getId());
 
         FreeStyleProject project = jenkins.createFreeStyleProject("notify-me");
-        PushbulletNotifier notifier = new PushbulletNotifier();
-        notifier.setUsers(jc.getId());
         project.getPublishersList().add(notifier);
 
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);

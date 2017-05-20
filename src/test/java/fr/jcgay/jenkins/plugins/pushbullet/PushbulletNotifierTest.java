@@ -11,6 +11,7 @@ import hudson.model.TaskListener;
 import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.RepositoryBrowser;
+import hudson.util.Secret;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -64,28 +66,28 @@ public class PushbulletNotifierTest {
 
     @Test
     public void send_notification_to_the_user_who_has_launched_the_build() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById, fakeDescriptor());
         notifier.perform(buildLaunchedBy("jc"), anyLauncher(), anyBuildListener());
 
-        verify(pushbullet).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet).notify(any(AbstractBuild.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
     }
 
     @Test
     public void send_notification_to_the_user_who_has_launched_the_pipeline() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById, fakeDescriptor());
         notifier.perform(runLaunchedBy("jc"), anyWorkspace(), anyLauncher(), anyTaskListener());
 
-        verify(pushbullet).notify(any(Run.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet).notify(any(Run.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
     }
 
     @Test
     public void send_notification_to_the_users_configured_for_the_job() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier("jc,toto,titi", pushbullet, getUserById);
+        notifier = new PushbulletNotifier("jc,toto,titi", pushbullet, getUserById, fakeDescriptor());
         notifier.perform(anyBuild(), anyLauncher(), anyBuildListener());
 
-        verify(pushbullet, times(3)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet, times(3)).notify(any(AbstractBuild.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getAllValues())
             .extracting("id")
             .hasSize(3)
@@ -94,10 +96,10 @@ public class PushbulletNotifierTest {
 
     @Test
     public void send_notification_to_the_users_configured_for_the_pipeline() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier("jc,toto,titi", pushbullet, getUserById);
+        notifier = new PushbulletNotifier("jc,toto,titi", pushbullet, getUserById, fakeDescriptor());
         notifier.perform(anyRun(), anyWorkspace(), anyLauncher(), anyTaskListener());
 
-        verify(pushbullet, times(3)).notify(any(Run.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet, times(3)).notify(any(Run.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getAllValues())
             .extracting("id")
             .hasSize(3)
@@ -106,19 +108,19 @@ public class PushbulletNotifierTest {
 
     @Test
     public void send_notification_to_the_user_configured_for_the_job() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier("jc", pushbullet, getUserById);
+        notifier = new PushbulletNotifier("jc", pushbullet, getUserById, fakeDescriptor());
         notifier.perform(anyBuild(), anyLauncher(), anyBuildListener());
 
-        verify(pushbullet).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet).notify(any(AbstractBuild.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
     }
 
     @Test
     public void send_notification_to_the_users_present_in_the_build_culprits_list() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById, fakeDescriptor());
         notifier.perform(buildWithCulprits("jc", "toto", "titi"), anyLauncher(), anyBuildListener());
 
-        verify(pushbullet, times(3)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet, times(3)).notify(any(AbstractBuild.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getAllValues())
             .extracting("id")
             .hasSize(3)
@@ -127,53 +129,53 @@ public class PushbulletNotifierTest {
 
     @Test
     public void no_notification_when_no_real_user_has_been_found() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById, fakeDescriptor());
         notifier.perform(anyBuild(), anyLauncher(), anyBuildListener());
 
-        verify(pushbullet, never()).notify(any(AbstractBuild.class), any(User.class), any(PrintStream.class));
+        verify(pushbullet, never()).notify(any(AbstractBuild.class), any(User.class), isNull(Secret.class), any(PrintStream.class));
     }
 
     @Test
     public void no_notification_when_no_real_user_has_been_found_in_pipeline() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById, fakeDescriptor());
         notifier.perform(anyRun(), anyWorkspace(), anyLauncher(), anyTaskListener());
 
-        verify(pushbullet, never()).notify(any(Run.class), any(User.class), any(PrintStream.class));
+        verify(pushbullet, never()).notify(any(Run.class), any(User.class), isNull(Secret.class), any(PrintStream.class));
     }
 
     @Test
     public void send_notification_only_once_when_user_appears_in_multiple_source() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier("jc", pushbullet, getUserById);
+        notifier = new PushbulletNotifier("jc", pushbullet, getUserById, fakeDescriptor());
         notifier.perform(buildLaunchedBy("jc", withCulprits("jc")), anyLauncher(), anyBuildListener());
 
-        verify(pushbullet, times(1)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet, times(1)).notify(any(AbstractBuild.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
     }
 
     @Test
     public void send_notification_only_once_when_user_appears_in_multiple_source_in_pipeline() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier("jc", pushbullet, getUserById);
+        notifier = new PushbulletNotifier("jc", pushbullet, getUserById, fakeDescriptor());
         notifier.perform(workflowRunLaunchedBy("jc", withChangesFrom("jc")), anyWorkspace(), anyLauncher(), anyTaskListener());
 
-        verify(pushbullet, times(1)).notify(any(Run.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet, times(1)).notify(any(Run.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
     }
 
     @Test
     public void send_notification_when_job_has_been_triggered_by_another_job_initially_started_by_a_user() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById, fakeDescriptor());
         notifier.perform(buildLaunchedByUpstream("jc"), anyLauncher(), anyBuildListener());
 
-        verify(pushbullet, times(1)).notify(any(AbstractBuild.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet, times(1)).notify(any(AbstractBuild.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
     }
 
     @Test
     public void send_notification_when_pipeline_has_been_triggered_by_another_job_initially_started_by_a_user() throws IOException, InterruptedException {
-        notifier = new PushbulletNotifier(null, pushbullet, getUserById);
+        notifier = new PushbulletNotifier(null, pushbullet, getUserById, fakeDescriptor());
         notifier.perform(runLaunchedByUpstream("jc"), anyWorkspace(), anyLauncher(), anyTaskListener());
 
-        verify(pushbullet, times(1)).notify(any(Run.class), user.capture(), any(PrintStream.class));
+        verify(pushbullet, times(1)).notify(any(Run.class), user.capture(), isNull(Secret.class), any(PrintStream.class));
         assertThat(user.getValue().getId()).isEqualTo("jc");
     }
 
@@ -209,6 +211,10 @@ public class PushbulletNotifierTest {
 
     private static String[] withChangesFrom(String userId) {
         return new String[]{userId};
+    }
+
+    private static PushbulletNotifier.DescriptorImpl fakeDescriptor() {
+        return mock(PushbulletNotifier.DescriptorImpl.class);
     }
 
     private static BuildListener anyBuildListener() {

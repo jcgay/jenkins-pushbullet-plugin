@@ -20,11 +20,14 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
+import hudson.util.Secret;
 import jenkins.tasks.SimpleBuildStep;
+import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,17 +47,20 @@ public class PushbulletNotifier extends Notifier implements SimpleBuildStep {
     private String users;
     private SendNotification pushbullet;
     private Function<String, User> getUserById;
+    private DescriptorImpl descriptor;
 
     @DataBoundConstructor
     public PushbulletNotifier() {
-        this(null, new SendNotification(), GetUserById.INSTANCE);
+        this.pushbullet = new SendNotification();
+        this.getUserById = GetUserById.INSTANCE;
     }
 
     @VisibleForTesting
-    PushbulletNotifier(String users, SendNotification pushbullet, Function<String, User> getUserById) {
+    PushbulletNotifier(String users, SendNotification pushbullet, Function<String, User> getUserById, PushbulletNotifier.DescriptorImpl descriptor) {
         this.users = users;
         this.pushbullet = pushbullet;
         this.getUserById = getUserById;
+        this.descriptor = descriptor;
     }
 
     public String getUsers() {
@@ -82,6 +88,14 @@ public class PushbulletNotifier extends Notifier implements SimpleBuildStep {
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
         dirtyInit();
         perform(run, getUsersInvolvedInChanges(run), listener.getLogger());
+    }
+
+    @Override
+    public DescriptorImpl getDescriptor() {
+        if (descriptor != null) {
+            return descriptor;
+        }
+        return (DescriptorImpl) super.getDescriptor();
     }
 
     private static Set<User> getUsersInvolvedInChanges(Run<?, ?> run) {
@@ -145,8 +159,9 @@ public class PushbulletNotifier extends Notifier implements SimpleBuildStep {
             usersToNotify.add(byId.wrap(user));
         }
 
+        Secret token = getDescriptor().getSecretApiToken();
         for (Equivalence.Wrapper<User> user : usersToNotify) {
-            pushbullet.notify(run, user.get(), logger);
+            pushbullet.notify(run, user.get(), token, logger);
         }
     }
 
@@ -173,7 +188,20 @@ public class PushbulletNotifier extends Notifier implements SimpleBuildStep {
 
     @Extension
     @Symbol("pushbullet")
-    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
+        private Secret apiToken;
+
+        public DescriptorImpl() {
+            load();
+        }
+
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+            req.bindJSON(this, json);
+            save();
+            return super.configure(req, json);
+        }
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
@@ -183,6 +211,25 @@ public class PushbulletNotifier extends Notifier implements SimpleBuildStep {
         @Override
         public String getDisplayName() {
             return "Report build status with Pushbullet";
+        }
+
+        public String getApiToken() {
+            if (apiToken == null) {
+                return null;
+            }
+            String token = apiToken.getPlainText();
+            if (token == null || token.isEmpty()) {
+                return null;
+            }
+            return apiToken.getEncryptedValue();
+        }
+
+        public void setApiToken(String apiToken) {
+            this.apiToken = Secret.fromString(apiToken);
+        }
+
+        public Secret getSecretApiToken() {
+            return apiToken;
         }
     }
 
@@ -197,4 +244,5 @@ public class PushbulletNotifier extends Notifier implements SimpleBuildStep {
             return Objects.hash(user.getId());
         }
     }
+
 }

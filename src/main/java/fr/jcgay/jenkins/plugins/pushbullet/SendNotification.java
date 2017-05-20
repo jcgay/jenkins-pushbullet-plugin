@@ -6,6 +6,7 @@ import fr.jcgay.notification.Notification;
 import fr.jcgay.notification.SendNotificationException;
 import hudson.model.Run;
 import hudson.model.User;
+import hudson.util.Secret;
 
 import java.io.PrintStream;
 import java.net.URL;
@@ -16,17 +17,16 @@ class SendNotification {
     private static final Icon JENKINS_ICON = Icon.create(resource("jenkins.png"), "jenkins");
     private static final Application JENKINS = Application.builder("application/jenkins", "Jenkins", JENKINS_ICON).build();
 
-    void notify(Run<?, ?> build, User user, PrintStream logger) {
+    void notify(Run<?, ?> build, User user, Secret encryptedToken, PrintStream logger) {
         if (user == null) {
             return;
         }
 
-        PushbulletUser pushbullet = user.getProperty(PushbulletUser.class);
-        if (pushbullet == null || pushbullet.getSecretApiToken() == null) {
+        if (encryptedToken == null) {
             return;
         }
 
-        String token = pushbullet.getSecretApiToken().getPlainText();
+        String token = encryptedToken.getPlainText();
         if (token == null || token.isEmpty()) {
             return;
         }

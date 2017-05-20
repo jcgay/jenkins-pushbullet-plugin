@@ -6,23 +6,24 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PushbulletUserTest {
+public class PushbulletTokenEncryptionTest {
 
     @Rule
     public JenkinsRule jenkins = new JenkinsRule();
 
     @Test
     public void return_null_when_apiToken_is_not_set() {
-        PushbulletUser user = new PushbulletUser(null);
+        PushbulletNotifier.DescriptorImpl descriptor = new PushbulletNotifier.DescriptorImpl();
 
-        assertThat(user.getApiToken()).isNullOrEmpty();
+        assertThat(descriptor.getApiToken()).isNullOrEmpty();
     }
 
     @Test
     public void return_encrypted_value_for_apiToken() {
-        PushbulletUser user = new PushbulletUser("token");
+        PushbulletNotifier.DescriptorImpl descriptor = new PushbulletNotifier.DescriptorImpl();
+        descriptor.setApiToken("token");
 
-        assertThat(user.getApiToken())
+        assertThat(descriptor.getApiToken())
             .isNotEmpty()
             .isNotEqualTo("token");
     }
