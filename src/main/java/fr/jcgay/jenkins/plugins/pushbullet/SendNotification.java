@@ -12,6 +12,8 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.util.Properties;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 class SendNotification {
 
     private static final Icon JENKINS_ICON = Icon.create(resource("jenkins.png"), "jenkins");
@@ -43,7 +45,7 @@ class SendNotification {
         Status result = Status.of(build.getResult());
 
         Notification notification = Notification.builder()
-            .title(result.message() + " of " + build.getParent().getName())
+            .title(result.message() + " of " + name(build))
             .message(build.getFullDisplayName() + " (" + build.getDurationString() + ")")
             .icon(Icon.create(result.url(), result.message()))
             .subtitle(build.getDurationString())
@@ -58,6 +60,15 @@ class SendNotification {
         } finally {
             notifier.close();
         }
+    }
+
+    private static String name(Run<?, ?> build) {
+        String first = build.getParent().getParent().getFullName();
+        String last = build.getParent().getName();
+        if (isNullOrEmpty(first)) {
+            return last;
+        }
+        return first + " - " + last;
     }
 
     private static URL resource(String resource) {
