@@ -53,8 +53,8 @@ class SendNotification {
         try {
             notifier.send(notification);
             logger.println("User [" + user.getId() + "] has been notified with Pushbullet.");
-        } catch (SendNotificationException ignored) {
-            logger.println("Notification of user [" + user.getId() + "] with Pushbullet has failed.");
+        } catch (SendNotificationException e) {
+            logger.println("Notification of user [" + user.getId() + "] with Pushbullet has failed.\n Error: " + e);
         } finally {
             notifier.close();
         }
