@@ -4,7 +4,7 @@ A Jenkins plugin to report build status with [Pushbullet](https://www.pushbullet
 
 ## Installation
 
-Download [pushbullet.hpi](https://bintray.com/jcgay/maven/download_file?file_path=fr%2Fjcgay%2Fjenkins%2Fplugins%2Fpushbullet%2F0.3.0%2Fpushbullet-0.3.0.hpi) and install it manually in Jenkins (`http://jenkins/pluginManager/advanced`).
+Download [pushbullet.hpi](https://bintray.com/jcgay/maven/download_file?file_path=fr%2Fjcgay%2Fjenkins%2Fplugins%2Fpushbullet%2F0.4.0%2Fpushbullet-0.4.0.hpi) and install it manually in Jenkins (`http://jenkins/pluginManager/advanced`).
 
 ## Usage
 
@@ -21,7 +21,7 @@ If the token is not set, Jenkins will not try to send push notifications.
 
 To receive notification each user must define its Pushbullet account ID (email) in Jenkins user settings (`http://<jenkins.url>/me/configure`).
 
-![User Configuration](https://jeanchristophegay.com/images/jenkins-pushbullet-plugin-user-configuration.png)
+![User Configuration](https://jeanchristophegay.com/images/jenkins-pushbullet-plugin-user2-configuration.png)
 
 ### Notified users
 
