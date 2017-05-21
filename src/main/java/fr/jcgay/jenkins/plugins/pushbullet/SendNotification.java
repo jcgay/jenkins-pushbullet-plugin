@@ -35,6 +35,10 @@ class SendNotification {
 
         Properties configuration = new Properties();
         configuration.put("notifier.pushbullet.apikey", token);
+        PushbulletUser pushbulletUser = user.getProperty(PushbulletUser.class);
+        if (pushbulletUser != null && !isNullOrEmpty(pushbulletUser.getAccountId())) {
+            configuration.put("notifier.pushbullet.email", pushbulletUser.getAccountId());
+        }
 
         fr.jcgay.notification.Notifier notifier = new fr.jcgay.notification.SendNotification()
             .setApplication(JENKINS)
