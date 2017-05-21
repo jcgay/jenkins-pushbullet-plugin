@@ -1,3 +1,8 @@
+# 0.4.1
+***
+
+- Really send notification based on User#accountId ([cc69f94](http://github.com/jcgay/jenkins-pushbullet-plugin/commit/cc69f94eefadac5fa70ffd2ba1238a323a4ac2d5))
+
 # 0.4.0
 ***
 

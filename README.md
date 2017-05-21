@@ -4,7 +4,7 @@ A Jenkins plugin to report build status with [Pushbullet](https://www.pushbullet
 
 ## Installation
 
-Download [pushbullet.hpi](https://bintray.com/jcgay/maven/download_file?file_path=fr%2Fjcgay%2Fjenkins%2Fplugins%2Fpushbullet%2F0.4.0%2Fpushbullet-0.4.0.hpi) and install it manually in Jenkins (`http://jenkins/pluginManager/advanced`).
+Download [pushbullet.hpi](https://bintray.com/jcgay/maven/download_file?file_path=fr%2Fjcgay%2Fjenkins%2Fplugins%2Fpushbullet%2F0.4.1%2Fpushbullet-0.4.1.hpi) and install it manually in Jenkins (`http://jenkins/pluginManager/advanced`).
 
 ## Usage
 
