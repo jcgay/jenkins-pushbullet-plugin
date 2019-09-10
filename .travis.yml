@@ -1,7 +1,11 @@
-sudo: false
+dist: trusty
 language: java
+addons:
+  apt:
+    packages:
+      - openjdk-7-jdk
 jdk:
-  - oraclejdk7
+  - openjdk7
 install:
   - mvn install -DskipTests=true -B -V
 script:
